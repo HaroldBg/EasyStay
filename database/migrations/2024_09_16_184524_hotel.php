@@ -1,7 +1,6 @@
 <?php
 
-use App\Enums\UserRoles;
-use App\Enums\UserStatus;
+use App\Enums\HotelStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,17 +12,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('hotel', function (Blueprint $table) {
             $table->id();
             $table->string('nom',255);
-            $table->string('prenom',255);
             $table->string('email')->unique();
             $table->string('adresse',255)->nullable();
             $table->string('tel');
-            $table->string('picture',255);
-            $table->string('password');
-            $table->enum('role', array_column(UserRoles::cases(),'value'));
-            $table->enum('statut', array_column(UserStatus::cases(),'value'));
+            $table->string('logo',255);
+            $table->integer('etoile');
+            $table->enum('statut', array_column(HotelStatus::cases(),'value'));
+            $table->timestamp('createdAt');
+            $table->timestamp('updateAt')->useCurrentOnUpdate()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
@@ -35,6 +34,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+
+        Schema::dropIfExists('hotel');
     }
 };
