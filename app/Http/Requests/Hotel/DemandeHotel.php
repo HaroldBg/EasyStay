@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\Hotel;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class LoginRequest extends FormRequest
+class DemandeHotel extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,26 +24,26 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'=> 'required|email|exists:users,email',
-            'password' => 'required','string',
+            "motif"=>"string",
+            "nom"=>"required|string",
+            "email"=>"required|email",
+            "adresse"=>"required|string",
+            "user_id"=>"exists:users,id"
         ];
     }
-    // validation messages
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array<string, string>
-     */
+
     public function messages() : array
     {
         return [
+            'nom.required' => 'Le nom  de votre Hotel est requis.',
+            'adresse.required' => 'Votre adresse est requise.',
             'email.required' => 'Votre mail est requis.',
-            'email.exists' => "Le mail fourni n'existe pas.",
-            'password.required' => 'Mot de passe requis',
+            'email.unique' => "Le mail existe déjà .",
             'email.email' => 'Mail invalide',
+            "user_id.exists"=>"L'utilisateur n'existe pas."
         ];
     }
-    protected function failedValidation(Validator $validator)
+    /*protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors();
 
@@ -51,9 +51,9 @@ class LoginRequest extends FormRequest
         throw new HttpResponseException(
             response()->json([
                 'error' => true,
-                'message' => 'Validation failed',
+                'message' => 'Validation échoué',
                 'errors' => $errors,
             ], 422)
         );
-    }
+    }*/
 }

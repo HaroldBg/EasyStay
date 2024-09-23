@@ -21,12 +21,12 @@ class SudoSeeder extends Seeder
         User::create([
             'nom'=>'Sudo',
             'prenom'=>'Admin',
-            'email'=>'sudo@admin.hostel',
+            'email'=>'sudo@admin.hotel',
             'tel'=>'+229 91461545',
-            'picture'=>'blank_profile.png',
+            'picture'=>'images/blank_profile.jpeg',
             'password'=>bcrypt('Avademes21@?'),
             'role'=>UserRoles::SUDO,
-            'statut'=>UserStatus::ENABLE,
+            'status'=>UserStatus::ENABLE,
         ]);
 
     }

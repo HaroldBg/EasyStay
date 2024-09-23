@@ -6,6 +6,8 @@ namespace App\Models;
 use App\Enums\UserRoles;
 use App\Enums\UserStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -27,6 +29,9 @@ class User extends Authenticatable
         'tel',
         'picture',
         'password',
+        'role',
+        'status',
+        'hotels_id',
     ];
 
     /**
@@ -49,6 +54,19 @@ class User extends Authenticatable
         'createdAt' => 'datetime',
         'updateAt' => 'datetime',
         'role' => UserRoles::class,
-        'statut' => UserStatus::class,
+        'status' => UserStatus::class,
     ];
+
+    public function getRole()
+    {
+        return $this->role;
+    }
+    public function demands(): HasMany
+    {
+        return $this->hasMany(Demande::class,'users_id');
+    }
+    public function hotel() : BelongsTo
+    {
+        return $this->belongsTo(Hotel::class);
+    }
 }

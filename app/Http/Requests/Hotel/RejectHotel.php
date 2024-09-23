@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\Hotel;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class LoginRequest extends FormRequest
+class RejectHotel extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,23 +24,14 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'=> 'required|email|exists:users,email',
-            'password' => 'required','string',
+            "motif"=>"required|string",
         ];
     }
-    // validation messages
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array<string, string>
-     */
+
     public function messages() : array
     {
         return [
-            'email.required' => 'Votre mail est requis.',
-            'email.exists' => "Le mail fourni n'existe pas.",
-            'password.required' => 'Mot de passe requis',
-            'email.email' => 'Mail invalide',
+            'motif.required' => 'Motif de rejet requis.',
         ];
     }
     protected function failedValidation(Validator $validator)
@@ -51,7 +42,7 @@ class LoginRequest extends FormRequest
         throw new HttpResponseException(
             response()->json([
                 'error' => true,
-                'message' => 'Validation failed',
+                'message' => 'Validation échoué',
                 'errors' => $errors,
             ], 422)
         );

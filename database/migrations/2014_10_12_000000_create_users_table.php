@@ -22,8 +22,9 @@ return new class extends Migration
             $table->string('tel');
             $table->string('picture',255);
             $table->string('password');
-            $table->enum('role', array_column(UserRoles::cases(),'value'));
-            $table->enum('statut', array_column(UserStatus::cases(),'value'));
+            $table->enum('role', UserRoles::values())->default(UserRoles::CLIENT->value);
+            $table->enum('status', UserStatus::values())->default(UserStatus::EMAIL_CONFIRMATION_PENDING->value);
+            $table->unsignedBigInteger('hotels_id')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
