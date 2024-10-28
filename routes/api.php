@@ -24,18 +24,23 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix("auth")->group(function (){
     Route::post("login",[AuthController::class,"login"])->name('login');
     Route::post("storeAdmin",[AuthController::class,"registerAdmin"]);
+    Route::post("storeClient",[AuthController::class,"storeClient"]);
 });
 Route::prefix("auth")->middleware("auth:sanctum")->group(function (){
     Route::post("logout",[AuthController::class,"logout"]);
+    Route::post("storeFDA",[AuthController::class,"storeFrontDeskAgent"]);
 });
 // hotel
+
+Route::get("/hotel",[HotelController::class,"getHotels"]);
 Route::prefix("hotel")->middleware("auth:sanctum")->group(function (){
     Route::post("demande",[HotelController::class,"demandeHotel"]);
     Route::post("reject",[HotelController::class,"reject"]);
     Route::get("demandes",[HotelController::class,"getDemands"]);
-    Route::get("",[HotelController::class,"getHotels"]);
     Route::get("show/{id:id}",[HotelController::class,"show"]);
-    Route::delete("{id:id}",[HotelController::class,"delete"]);
+    Route::get("showHotel/{id:id}",[HotelController::class,"showHotel"]);
+    Route::delete("demande/{id:id}",[HotelController::class,"delete"]);
+    Route::delete("{id:id}",[HotelController::class,"deleteHotel"]);
     Route::get("confirm/{id:id}",[HotelController::class,"confirm"]);
 });
 

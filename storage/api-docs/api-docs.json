@@ -1,0 +1,458 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "EasyStay Documentation",
+        "description": "Ceci est la documentation de EasyStay.",
+        "contact": {
+            "email": "haroldavademe0@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Connexion Utilisateur",
+                "description": "Connexion d'un utilisateur et retour d'un token ",
+                "operationId": "login",
+                "requestBody": {
+                    "description": "Identifiants de connexion",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "Adresse email de l'utilisateur",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "description": "Mot de passe de l'utilisateur",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "description": "Indicates if there was an error",
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "description": "Authentication message",
+                                            "type": "string",
+                                            "example": "vous êtes authentifié"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "nom": {
+                                                    "type": "string",
+                                                    "example": "Sudo"
+                                                },
+                                                "prenom": {
+                                                    "type": "string",
+                                                    "example": "Admin"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "sudo@admin.hotel"
+                                                },
+                                                "adresse": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "tel": {
+                                                    "type": "string",
+                                                    "example": "+229 91461545"
+                                                },
+                                                "picture": {
+                                                    "type": "string",
+                                                    "example": "images/blank_profile.jpeg"
+                                                },
+                                                "role": {
+                                                    "type": "string",
+                                                    "example": "Sudo"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "Enable"
+                                                },
+                                                "hotels_id": {
+                                                    "type": "integer",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "email_verified_at": {
+                                                    "type": "string",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-10-25T01:08:30.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-10-25T01:08:30.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "5|2YaDKuz5UPdqAR2RoVOb9sxbz92a9b5JJGvGzgGs29e54f58"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Invalid credentials"
+                    },
+                    "422": {
+                        "description": "Validation error - Missing required fields"
+                    }
+                }
+            }
+        },
+        "/api/auth/storeAdmin": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Enregistrement d'un nouvel Administrateur",
+                "description": "Crée un nouveau compte utilisateur administrateur et renvoie les détails de l'utilisateur",
+                "operationId": "storeAdmin",
+                "requestBody": {
+                    "description": "Données d'enregistrement de l'administrateur",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nom",
+                                    "prenom",
+                                    "email",
+                                    "password",
+                                    "tel"
+                                ],
+                                "properties": {
+                                    "nom": {
+                                        "description": "User's last name",
+                                        "type": "string",
+                                        "example": "Sudo"
+                                    },
+                                    "prenom": {
+                                        "description": "User's first name",
+                                        "type": "string",
+                                        "example": "Admin"
+                                    },
+                                    "email": {
+                                        "description": "User's email address",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "sudo@admin.hotel"
+                                    },
+                                    "adresse": {
+                                        "description": "User's address",
+                                        "type": "string",
+                                        "example": "123 Main St",
+                                        "nullable": true
+                                    },
+                                    "tel": {
+                                        "description": "User's phone number",
+                                        "type": "string",
+                                        "example": "+229 91461545"
+                                    },
+                                    "password": {
+                                        "description": "User's password",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "picture": {
+                                        "description": "User's profile picture",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Admin account successfully created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "description": "Indicates if there was an error",
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "description": "Success message",
+                                            "type": "string",
+                                            "example": "votre compte a été créé avec succès."
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "nom": {
+                                                    "type": "string",
+                                                    "example": "Sudo"
+                                                },
+                                                "prenom": {
+                                                    "type": "string",
+                                                    "example": "Admin"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "sudo@admin.hotel"
+                                                },
+                                                "adresse": {
+                                                    "type": "string",
+                                                    "example": "123 Main St",
+                                                    "nullable": true
+                                                },
+                                                "tel": {
+                                                    "type": "string",
+                                                    "example": "+229 91461545"
+                                                },
+                                                "picture": {
+                                                    "type": "string",
+                                                    "example": "images/Avatar/Avatar_Sudo_Admin_1633021012.jpeg"
+                                                },
+                                                "role": {
+                                                    "type": "string",
+                                                    "example": "Admin"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "EMAIL_CONFIRMATION_PENDING"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-10-25T01:08:30.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-10-25T01:08:30.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - Invalid input"
+                    },
+                    "422": {
+                        "description": "Validation error - Missing required fields"
+                    }
+                }
+            }
+        },
+        "/api/auth/storeClient": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Enregistrement client",
+                "description": "Crée un nouveau compte utilisateur client et renvoie les détails de l'utilisateur",
+                "operationId": "storeClient",
+                "requestBody": {
+                    "description": "Données de création client",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nom",
+                                    "prenom",
+                                    "email",
+                                    "password",
+                                    "tel"
+                                ],
+                                "properties": {
+                                    "nom": {
+                                        "description": "User's last name",
+                                        "type": "string",
+                                        "example": "Sudo"
+                                    },
+                                    "prenom": {
+                                        "description": "User's first name",
+                                        "type": "string",
+                                        "example": "Admin"
+                                    },
+                                    "email": {
+                                        "description": "User's email address",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "sudo@client.hotel"
+                                    },
+                                    "adresse": {
+                                        "description": "User's address",
+                                        "type": "string",
+                                        "example": "123 Main St",
+                                        "nullable": true
+                                    },
+                                    "tel": {
+                                        "description": "User's phone number",
+                                        "type": "string",
+                                        "example": "+229 91461545"
+                                    },
+                                    "password": {
+                                        "description": "User's password",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "picture": {
+                                        "description": "User's profile picture",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Client account successfully created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "description": "Indicates if there was an error",
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "description": "Success message",
+                                            "type": "string",
+                                            "example": "votre compte a été créé avec succès."
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "nom": {
+                                                    "type": "string",
+                                                    "example": "John"
+                                                },
+                                                "prenom": {
+                                                    "type": "string",
+                                                    "example": "Doe"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "johndoe@gmail.com"
+                                                },
+                                                "adresse": {
+                                                    "type": "string",
+                                                    "example": "123 Main St",
+                                                    "nullable": true
+                                                },
+                                                "tel": {
+                                                    "type": "string",
+                                                    "example": "+229 91461545"
+                                                },
+                                                "picture": {
+                                                    "type": "string",
+                                                    "example": "images/Avatar/Avatar_Sudo_Admin_1633021012.jpeg"
+                                                },
+                                                "role": {
+                                                    "type": "string",
+                                                    "example": "Client"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "EMAIL_CONFIRMATION_PENDING"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-10-25T01:08:30.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-10-25T01:08:30.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - Invalid input"
+                    },
+                    "422": {
+                        "description": "Validation error - Missing required fields"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Auth"
+        }
+    ]
+}

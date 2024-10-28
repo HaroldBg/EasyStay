@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Hotel;
 
 use App\Enums\DemandeSatus;
 use App\Enums\HotelStatus;
+use App\Enums\UserRoles;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Hotel\DemandeHotel;
 use App\Http\Requests\Hotel\RejectHotel;
@@ -18,6 +19,9 @@ class HotelController extends Controller
 {
     function demandeHotel(DemandeHotel $request) : JsonResponse
     {
+
+        $user = Auth::user();
+        abort_if($user->role !== UserRoles::ADMIN, 403,"Accès Refusé" );
         $validatorData = $request->validated();
 //        dd(Auth::id());
         $userID= Auth::id();
@@ -45,7 +49,7 @@ class HotelController extends Controller
         $hotel = Hotel::all();
         return response()->json([
             "error"=>false,
-            "Demandes"=>$hotel,
+            "Hotels"=>$hotel,
 
         ],200);
     }
@@ -65,7 +69,7 @@ class HotelController extends Controller
         if (!$demand){
             return response()->json([
                 "error"=>true,
-                "message"=>"Demande non existente"
+                "message"=>"Demande non existante"
             ],404);
         }
         return response()->json([
@@ -73,7 +77,23 @@ class HotelController extends Controller
             "Demande"=>$demand,
         ],200);
     }
+    public function showHotel($id)
+    {
+        $hotel = Hotel::find($id);
+        if (!$hotel){
+            return response()->json([
+                "error"=>true,
+                "message"=>"Hotel non existant"
+            ],404);
+        }
+        return response()->json([
+            'error'=>false,
+            "Demande"=>$hotel,
+        ],200);
+    }
     public function confirm($id){
+        $user = Auth::user();
+        abort_if($user->role !== UserRoles::SUDO, 403,"Accès Refusé" );
         // let find demande
         $demand = Demande::query()->find($id);
         if (!$demand){
@@ -157,6 +177,21 @@ class HotelController extends Controller
             ],404);
         }
         $demand->delete();
+        return response()->json([
+            "error"=>true,
+            'message' => 'Demande supprimée avec succès.',
+        ], 200);
+    }
+    public function deleteHotel($id)
+    {
+        $hotel = Hotel::query()->find($id);
+        if (!$hotel){
+            return response()->json([
+                "error"=>true,
+                "message"=>"Demande non existente",
+            ],404);
+        }
+        $hotel->delete();
         return response()->json([
             "error"=>true,
             'message' => 'Demande supprimée avec succès.',
