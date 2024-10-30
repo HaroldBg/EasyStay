@@ -43,7 +43,7 @@ class DemandeHotel extends FormRequest
             "user_id.exists"=>"L'utilisateur n'existe pas."
         ];
     }
-    /*protected function failedValidation(Validator $validator)
+    protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors();
 
@@ -55,5 +55,5 @@ class DemandeHotel extends FormRequest
                 'errors' => $errors,
             ], 422)
         );
-    }*/
+    }
 }

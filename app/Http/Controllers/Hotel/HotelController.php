@@ -103,6 +103,7 @@ class HotelController extends Controller
             ],404);
         }
 
+        $user = User::find($demand->users_id);
         $updateDemand = $demand->update([
             "status"=>DemandeSatus::VALIDATE,
         ]);
@@ -116,6 +117,22 @@ class HotelController extends Controller
             ],200);
 
         }
+        // before creation let check if this user have already a hotel created
+        $hotelExist = Hotel::query()->where('users_id',$demand->users_id)->exists();
+        if ($hotelExist){
+            // let's reject this demand
+            $demand->update([
+                "status"=>DemandeSatus::REJECTED->value,
+                "motif"=>"Utilisateur possédant déjà un hôtel existant.",
+            ]);
+            $demand = Demande::query()->find($id);
+            return response()->json([
+                'error'=>true,
+                'message'=>$user->nom." ".$user->prenom." possède déjà un hotel .",
+                'Demande'=>$demand,
+            ],1062);
+        }
+
         $hotel = Hotel::query()->create([
             "nom"=>$demand->nom,
             "email"=>$demand->email,
@@ -131,7 +148,6 @@ class HotelController extends Controller
         }
 
         // let attach this hotel to the admin
-        $user = User::find($demand->users_id);
         $user->update(
             [
                 "hotels_id"=>$hotel->id,
@@ -176,7 +192,9 @@ class HotelController extends Controller
                 "message"=>"Demande non existente",
             ],404);
         }
-        $demand->delete();
+        $demand->update([
+            "status"=>DemandeSatus::DELETED,
+        ]);
         return response()->json([
             "error"=>true,
             'message' => 'Demande supprimée avec succès.',
@@ -188,13 +206,17 @@ class HotelController extends Controller
         if (!$hotel){
             return response()->json([
                 "error"=>true,
-                "message"=>"Demande non existente",
+                "message"=>"Hotel non existant",
             ],404);
         }
-        $hotel->delete();
+        //$hotel->delete();
+        // let parse hotel's status to deleted
+        $hotel->update([
+            "status"=>HotelStatus::DELETED,
+        ]);
         return response()->json([
             "error"=>true,
-            'message' => 'Demande supprimée avec succès.',
+            'message' => 'Hotel supprimé avec succès.',
         ], 200);
     }
 }

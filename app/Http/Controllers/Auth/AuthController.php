@@ -11,12 +11,14 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\StoreUserRequest;
 use App\Mail\AccountValidationMail;
 use App\Models\Admin;
+use App\Models\Hotel;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -106,6 +108,19 @@ class AuthController extends Controller
 
         $user = Auth::user();
         $token = $user->createToken($request->getClientIp())->plainTextToken;
+        //let check user's role
+        if ($user->role == UserRoles::ADMIN->value || $user->role == UserRoles::CLIENT->value){
+            $hotel = Hotel::query()->find($user->hotels_id);
+            Session::put('hotel',$user->hotels_id);
+            return response()->json([
+                "error"=>false,
+                "message"=>"vous êtes authentifié",
+                'user'=>$user,
+                "token_type"=>"Bearer",
+                "token"=>$token,
+                "hotel"=>$hotel,
+            ],200);
+        }
         return response()->json([
             "error"=>false,
             "message"=>"vous êtes authentifié",
@@ -285,7 +300,7 @@ class AuthController extends Controller
      *     summary="Register a new front desk agent",
      *     description="Creates a new front desk agent account. Only admin can perform this action.",
      *     operationId="storeFrontDeskAgent",
-     *     tags={"Front Desk"},
+     *     tags={"Auth"},
      *     @OA\RequestBody(
      *         required=true,
      *         description="Front desk agent registration data",
@@ -380,7 +395,7 @@ class AuthController extends Controller
      *     description="Deletes the current access token and logs out the user.",
      *     operationId="logout",
      *     tags={"Auth"},
-     *     security={{"bearerAuth": {}}},  // Assurez-vous que le token d'accès est requis
+     *     security={{"bearerAuth": {}}},
      *     @OA\Response(
      *         response=200,
      *         description="Successful logout",
@@ -398,6 +413,10 @@ class AuthController extends Controller
      */
     public function logout()
     {
+        $user = Auth::user();
+        if ($user->role == UserRoles::ADMIN->value || $user->role == UserRoles::CLIENT->value){
+            Session::forget('hotel');
+        }
         Auth::user()->currentAccessToken()->delete();
         return response()->json([
             "error"=>false,

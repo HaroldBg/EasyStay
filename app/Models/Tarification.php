@@ -16,11 +16,12 @@ class Tarification extends Model
         "date_deb",
         "date_fin",
         "types_chambres_id",
+        "users_id",
     ];
 
     protected $casts = [
-        "date_deb"=>"datetime",
-        "date_fin"=>"datetime",
+        "date_deb"=>"date",
+        "date_fin"=>"date",
         'createdAt' => 'datetime',
         'updateAt' => 'datetime',
     ];

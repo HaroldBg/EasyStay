@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\TypeChambreStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +16,10 @@ return new class extends Migration
             $table->id();
             $table->string('name',255)->unique();
             $table->string('capacity');
+            $table->enum('status', TypeChambreStatus::values())->default(TypeChambreStatus::AVAILABLE);
             $table->string('features')->nullable();
+            $table->foreignId('hotel_id')->constrained('hotels')->onDelete('cascade');
+            $table->foreignId('users_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

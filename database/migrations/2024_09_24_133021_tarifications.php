@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\TarificationStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,9 +16,11 @@ return new class extends Migration
             $table->id();
             $table->decimal('prix',8,2);
             $table->string('saison',255);
+            $table->enum('status', TarificationStatus::values())->default(TarificationStatus::AVAILABLE);
             $table->foreignId('types_chambres_id')->constrained('types_chambres')->onDelete('cascade');
-            $table->dateTime('date_deb');
-            $table->dateTime('date_fin');
+            $table->date('date_deb');
+            $table->date('date_fin');
+            $table->foreignId('users_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -6,7 +6,7 @@ enum UserStatus: string
     case DISABLE = 'Disable';
     case EMAIL_CONFIRMATION_PENDING = 'Email Confirmation Pending';
     case ACCOUNT_CONFIRMATION_PENDING = 'Account Confirmation Pending';
-
+    case DELETED = 'Deleted';
     public static function values():array
     {
         return [
@@ -14,6 +14,7 @@ enum UserStatus: string
             self::DISABLE->value,
             self::ENABLE->value,
             self::EMAIL_CONFIRMATION_PENDING->value,
+            self::DELETED->value,
         ];
     }
 }

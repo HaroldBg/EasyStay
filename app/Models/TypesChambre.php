@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\HotelStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TypesChambre extends Model
@@ -14,6 +16,9 @@ class TypesChambre extends Model
         "name",
         "capacity",
         "features",
+        "hotel_id",
+        "users_id",
+        "status",
     ];
 
     protected $casts = [
@@ -29,5 +34,10 @@ class TypesChambre extends Model
     public function tarifications(): HasMany
     {
         return $this->hasMany(Tarification::class);
+    }
+    // hotel
+    public function hotel():BelongsTo
+    {
+        return $this->belongsTo(Hotel::class);
     }
 }

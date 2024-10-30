@@ -447,6 +447,206 @@
                     }
                 }
             }
+        },
+        "/api/auth/storeFDA": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register a new front desk agent",
+                "description": "Creates a new front desk agent account. Only admin can perform this action.",
+                "operationId": "storeFrontDeskAgent",
+                "requestBody": {
+                    "description": "Front desk agent registration data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nom",
+                                    "prenom",
+                                    "email",
+                                    "password",
+                                    "tel"
+                                ],
+                                "properties": {
+                                    "nom": {
+                                        "description": "Agent's last name",
+                                        "type": "string",
+                                        "example": "Sudo"
+                                    },
+                                    "prenom": {
+                                        "description": "Agent's first name",
+                                        "type": "string",
+                                        "example": "Admin"
+                                    },
+                                    "email": {
+                                        "description": "Agent's email address",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "sudo@frontdesk.hotel"
+                                    },
+                                    "adresse": {
+                                        "description": "Agent's address",
+                                        "type": "string",
+                                        "example": "123 Main St",
+                                        "nullable": true
+                                    },
+                                    "tel": {
+                                        "description": "Agent's phone number",
+                                        "type": "string",
+                                        "example": "+229 91461545"
+                                    },
+                                    "password": {
+                                        "description": "Agent's password",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "picture": {
+                                        "description": "Agent's profile picture",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Front desk agent account successfully created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "description": "Indicates if there was an error",
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "description": "Success message",
+                                            "type": "string",
+                                            "example": "Votre compte a été créé avec succès."
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "nom": {
+                                                    "type": "string",
+                                                    "example": "Sudo"
+                                                },
+                                                "prenom": {
+                                                    "type": "string",
+                                                    "example": "Admin"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "sudo@frontdesk.hotel"
+                                                },
+                                                "adresse": {
+                                                    "type": "string",
+                                                    "example": "123 Main St",
+                                                    "nullable": true
+                                                },
+                                                "tel": {
+                                                    "type": "string",
+                                                    "example": "+229 91461545"
+                                                },
+                                                "picture": {
+                                                    "type": "string",
+                                                    "example": "images/Avatar/Avatar_Sudo_Admin_1633021012.jpeg"
+                                                },
+                                                "role": {
+                                                    "type": "string",
+                                                    "example": "Front Desk Agent"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "EMAIL_CONFIRMATION_PENDING"
+                                                },
+                                                "hotels_id": {
+                                                    "description": "ID of the hotel the agent belongs to",
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-10-25T01:08:30.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-10-25T01:08:30.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Only admin can create a front desk agent"
+                    },
+                    "400": {
+                        "description": "Bad request - Invalid input"
+                    },
+                    "422": {
+                        "description": "Validation error - Missing required fields"
+                    }
+                }
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout the authenticated user",
+                "description": "Deletes the current access token and logs out the user.",
+                "operationId": "logout",
+                "responses": {
+                    "200": {
+                        "description": "Successful logout",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "description": "Indicates if there was an error",
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "description": "Success message",
+                                            "type": "string",
+                                            "example": "Déconnexion réussite"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User not authenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "tags": [

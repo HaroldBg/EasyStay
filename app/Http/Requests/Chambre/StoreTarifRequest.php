@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StoreChambreRequest extends FormRequest
+class StoreTarifRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,11 +24,10 @@ class StoreChambreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'images' => 'array',
-            'images.*' => 'image|mimes:jpg,png,jpeg|max:2048',
-            "num"=>"required|string",
-            "description"=>"required|string",
-            "hotel_id"=>"exists:hotels,id",
+            "prix"=>"required|string",
+            "saison"=>"required|string",
+            "date_deb"=>"required|date",
+            "date_fin"=>"required|date",
             "users_id"=>"exists:users,id",
             "types_chambres_id"=>"exists:types_chambres,id",
         ];
@@ -37,15 +36,11 @@ class StoreChambreRequest extends FormRequest
     public function messages() : array
     {
         return [
-            'images.required' => 'Veuillez ajouter au moins une image.',
-            'images.array' => 'Les images doivent être un tableau de fichiers.',
-            'images.*.image' => 'Chaque fichier doit être une image.',
-            'images.*.mimes' => 'Les images doivent être au format jpg, jpeg ou png.',
-            'images.*.max' => 'Chaque image doit faire moins de 2 Mo.',
-            'name.required' => 'Le nom  de votre type de chambre .',
-            'capacity.required' => 'La capacité de la chambre requise.',
+            'prix.required' => 'Le prix est requis .',
+            'saison.required' => 'La saison est requise .',
+            'date_deb.required' => 'La date de début de la saison est requise.',
+            'date_fin.required' => 'La date de fin de la saison est requise.',
             "user_id.exists"=>"L'utilisateur n'existe pas.",
-            "hotel_id.exists"=>"L'hôtel n'existe pas.",
             "types_chambres_id.exists"=>"Type de chambre nn existante",
         ];
     }

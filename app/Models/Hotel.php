@@ -31,6 +31,15 @@ class Hotel extends Model
     {
         return $this->hasMany(User::class);
     }
+    //room
+    public function room():HasMany
+    {
+        return $this->hasMany(Chambre::class);
+    }
+    public function room_type():HasMany
+    {
+        return $this->hasMany(TypesChambre::class);
+    }
     public  function admin() : BelongsTo
     {
         return $this->belongsTo(Admin::class,'users_id');

@@ -5,6 +5,7 @@ enum HotelStatus:string
     case ENABLE = 'Enable';
     case DISABLE = 'Disable';
     case PENDING = 'Configuration Pending';
+    case DELETED = 'Deleted';
 
     public static function values():array
     {
@@ -12,6 +13,7 @@ enum HotelStatus:string
             self::ENABLE->value,
             self::DISABLE->value,
             self::PENDING->value,
+            self::DELETED->value,
         ];
     }
 }
