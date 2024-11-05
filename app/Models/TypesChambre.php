@@ -28,16 +28,16 @@ class TypesChambre extends Model
 
     public function chambres(): HasMany
     {
-        return $this->hasMany(Chambre::class);
+        return $this->hasMany(Chambre::class,'types_chambres_id');
     }
 
     public function tarifications(): HasMany
     {
-        return $this->hasMany(Tarification::class);
+        return $this->hasMany(Tarification::class,'types_chambres_id');
     }
     // hotel
     public function hotel():BelongsTo
     {
-        return $this->belongsTo(Hotel::class);
+        return $this->belongsTo(Hotel::class,'hotel_id');
     }
 }

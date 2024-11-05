@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Chambre\ChambreController;
 use App\Http\Controllers\Chambre\ChambreTypeController;
+use App\Http\Controllers\Chambre\ReservationController;
 use App\Http\Controllers\Chambre\TarificationController;
 use App\Http\Controllers\Hotel\HotelController;
 use App\Http\Controllers\TypesChambre\TypesChambreController;
@@ -59,9 +60,18 @@ Route::prefix("/chambre")->middleware("auth:sanctum")->group(function (){
     Route::post("store",[ChambreController::class,"storeChambre"]);
     Route::get("show/{id:id}",[ChambreController::class,"showChambre"]);
     Route::get("showAll",[ChambreController::class,"showAllRoom"]);
+    Route::get("showAllRoomWithTarifs",[ChambreController::class,"showAllRoomWithTarifs"]);
+    Route::get("showRoomWithTarifs/{id:id}",[ChambreController::class,"showRommWithTarifs"]);
+    Route::get("showRoomWithPriceSeason",[ChambreController::class,"showRoomWithPriceSeason"]);
+    Route::get("showSRoomWithPriceSeason/{id:id}",[ChambreController::class,"showSRoomWithPriceSeason"]);
 });
 Route::prefix("/chambre/tarification")->middleware("auth:sanctum")->group(function (){
     Route::post("store",[TarificationController::class,"storeTarif"]);
-    Route::get("show/{id:id}",[ChambreController::class,"showChambre"]);
-    Route::get("showAll",[ChambreController::class,"showAllRoom"]);
+    Route::get("showAllTarif",[TarificationController::class,"showAllTarif"]);
 });
+Route::post("/chambre/searchRoom",[ChambreController::class,"getAvailableRooms"]);
+
+Route::prefix("/reservation")->middleware("auth:sanctum")->group(function (){
+});
+
+Route::post("/reservation/storeReserv",[ReservationController::class,"storeReservation"]);

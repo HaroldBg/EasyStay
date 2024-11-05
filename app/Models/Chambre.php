@@ -29,7 +29,7 @@ class Chambre extends Model
 
     public function typesChambre(): BelongsTo
     {
-        return $this->belongsTo(TypesChambre::class);
+        return $this->belongsTo(TypesChambre::class,'types_chambres_id');
     }
     public function hotel():BelongsTo
     {
@@ -39,8 +39,8 @@ class Chambre extends Model
     {
         return $this->hasMany(ChambreImage::class);
     }
-    public function tarification(): HasMany
+    public function reservations():HasMany
     {
-        return $this->hasMany(Tarification::class);
+        return $this->hasMany(Reservation::class,'chambre_id');
     }
 }

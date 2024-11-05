@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ReservationStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,6 +14,14 @@ return new class extends Migration
     {
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->string('email')->nullable();
+            $table->foreignId('chambre_id')->nullable()->constrained('chambres')->onDelete('cascade');
+            $table->date('date_deb');
+            $table->date('date_fin');
+            $table->enum('status', ReservationStatus::values())->default(ReservationStatus::WAITING);
+            $table->integer('nmb_per');
+            $table->decimal('tarif_app',8,2);
             $table->timestamps();
         });
     }

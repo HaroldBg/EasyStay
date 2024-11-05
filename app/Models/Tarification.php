@@ -27,6 +27,6 @@ class Tarification extends Model
     ];
     public function typeChambre(): BelongsTo
     {
-        return $this->belongsTo(TypesChambre::class);
+        return $this->belongsTo(TypesChambre::class,'types_chambres_id');
     }
 }

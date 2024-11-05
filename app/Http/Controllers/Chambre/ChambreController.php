@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Chambre;
 use App\Enums\ChambreStatus;
 use App\Enums\UserRoles;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Chambre\AvailableRoomRequest;
 use App\Http\Requests\Chambre\StoreChambreRequest;
 use App\Models\Chambre;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class ChambreController extends Controller
@@ -100,4 +102,117 @@ class ChambreController extends Controller
             "chambre"=>$room,
         ]);
     }
+    // show all room with room's type and tarification
+    public function showAllRoomWithTarifs()
+    {
+        $user = Auth::user();
+        abort_if($user->role !== UserRoles::ADMIN, 403, "Accès Refusé");
+        // let get all room with all data
+        $rooms = Chambre::query()
+            ->where('statut',"!=",ChambreStatus::DELETED)
+            ->with('typesChambre.tarifications')->get();
+        return response()->json([
+            "error"=>false,
+            "chambres"=>$rooms
+        ],200);
+    }
+    public function showRommWithTarifs($id)
+    {
+        $user = Auth::user();
+        abort_if($user->role !== UserRoles::ADMIN, 403, "Accès Refusé");
+        $rooms = Chambre::query()
+            ->where('statut',"!=",ChambreStatus::DELETED)
+            ->with('typesChambre.tarifications')->findOrFail($id);
+        return response()->json([
+            "error"=>false,
+            "chambres"=>$rooms
+        ],200);
+    }
+    public function showRoomWithPriceSeason()
+    {
+        $user = Auth::user();
+        abort_if($user->role !== UserRoles::ADMIN, 403, "Accès Refusé");
+        // Obtenir le jour et le mois actuels au format "DD-MM"
+        $currentDayMonth = Carbon::now()->format('d-m');
+
+        $rooms = Chambre::query()
+            ->where('statut',"!=",ChambreStatus::DELETED)
+            ->with(['typesChambre.tarifications' => function ($query) use ($currentDayMonth) {
+                // Appliquer une condition pour vérifier si le jour et mois actuels sont dans la période
+                $query->whereRaw("DATE_FORMAT(date_deb, '%d-%m') <= ?", [$currentDayMonth])
+                    ->whereRaw("DATE_FORMAT(date_fin, '%d-%m') >= ?", [$currentDayMonth]);
+            }])->get();
+        return response()->json([
+            "error"=>false,
+            "chambres"=>$rooms
+        ],200);
+    }
+    public function showSRoomWithPriceSeason($id)
+    {
+        $user = Auth::user();
+        abort_if($user->role !== UserRoles::ADMIN, 403, "Accès Refusé");
+        // Obtenir le jour et le mois actuels au format "DD-MM"
+        $currentDayMonth = Carbon::now()->format('d-m');
+
+        $rooms = Chambre::query()
+            ->where('statut',"!=",ChambreStatus::DELETED)
+            ->with(['typesChambre.tarifications' => function ($query) use ($currentDayMonth) {
+                // Appliquer une condition pour vérifier si le jour et mois actuels sont dans la période
+                $query->whereRaw("DATE_FORMAT(date_deb, '%d-%m') <= ?", [$currentDayMonth])
+                    ->whereRaw("DATE_FORMAT(date_fin, '%d-%m') >= ?", [$currentDayMonth]);
+            }])->findOrFail($id);
+        return response()->json([
+            "error"=>false,
+            "chambres"=>$rooms
+        ],200);
+    }
+    //research available room
+    public function getAvailableRooms(AvailableRoomRequest $request)
+    {
+
+        $validatorData = $request->validated();
+        $dateDeb = Carbon::parse($request->date_deb);
+        $dateFin = Carbon::parse($request->date_fin);
+        $dayMonthDeb = $dateDeb->format('d-m');
+        $dayMonthFin = $dateFin->format('d-m');
+        $nmb_per = $request->nmb_per;
+
+        // Fetch rooms that are not reserved in the specified date range
+        $availableRooms = Chambre::query() 
+            ->whereHas('typesChambre', function ($query) use ($nmb_per) {
+                $query->where('capacity', '>=', $nmb_per);
+            })
+            ->whereDoesntHave('reservations', function ($query) use ($dateDeb, $dateFin) {
+                $query->where(function ($q) use ($dateDeb, $dateFin) {
+                    $q->whereBetween('date_deb', [$dateDeb, $dateFin])
+                        ->orWhereBetween('date_fin', [$dateDeb, $dateFin])
+                        ->orWhere(function ($query) use ($dateDeb, $dateFin) {
+                            $query->where('date_deb', '<=', $dateDeb)
+                                ->where('date_fin', '>=', $dateFin);
+                        });
+                });
+            })
+            ->with(['typesChambre.tarifications' => function ($query) use ($dayMonthDeb, $dayMonthFin) {
+                $query->whereRaw("DATE_FORMAT(date_deb, '%d-%m') <= ?", [$dayMonthDeb])
+                    ->whereRaw("DATE_FORMAT(date_fin, '%d-%m') >= ?", [$dayMonthFin]);
+            }, 'hotel'])
+            ->get();
+
+        // Calculate the total tariff for each room based on the number of nights
+        $availableRooms->each(function ($room) use ($dateDeb, $dateFin) {
+            $numberOfNights = $dateFin->diffInDays($dateDeb);
+            if ($room->typesChambre && $room->typesChambre->tarifications->isNotEmpty()) {
+                $tarifApplicable = $room->typesChambre->tarifications->first()->prix * $numberOfNights;
+                $room->tarif_applicable = $tarifApplicable;
+            } else {
+                $room->tarif_applicable = null; // Set null if no applicable tariff found
+            }
+        });
+
+        return response()->json([
+            "error" => false,
+            "available_rooms" => $availableRooms,
+        ], 200);
+    }
+
 }
