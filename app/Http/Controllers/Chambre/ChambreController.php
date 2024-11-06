@@ -32,6 +32,12 @@ class ChambreController extends Controller
                 "message"=>"Chambre déjà existante",
             ]);
         }
+        if (!$request->hasFile('images')){
+            return response()->json([
+                'error'=>true,
+                'message' => 'Images non uploader.',
+            ], 404);
+        }
         // first of all let create the room
         $room = Chambre::create([
             "num"=>$request->num,
@@ -50,15 +56,20 @@ class ChambreController extends Controller
         // let insert image
         if ($request->hasFile('images')){
             foreach ($request->file('images') as $image) {
-                $fileName = "Room_".$request->num."_". time().".".$image->getClientOriginalExtension();
+                $fileName = "Room_".$request->num."_". time()."_".rand(1,1000).".".$image->getClientOriginalExtension();
                 $filePath = $image->storeAs('images/Chambre',$fileName,'public');
                 $room->chambreImage()->create(['image_path' => $filePath]);
             }
+        }else{
+            return response()->json([
+                'error'=>true,
+                'message' => 'Images non uploader.',
+            ], 404);
         }
         $images = $room->chambreImage;
         return response()->json([
             'error'=>false,
-            'message' => 'Chambre et images creer.',
+            'message' => 'Chambre enregistrer avec succès.',
             'room' => $room,
             'images'=>$images,
         ], 200);
@@ -72,6 +83,7 @@ class ChambreController extends Controller
             ->where('statut',"!=",ChambreStatus::DELETED)
             ->where('hotel_id',$user->hotels_id)
             ->with('chambreImage')
+            ->with('typesChambre')
             ->get();
         if (!$rooms){
             return response()->json([

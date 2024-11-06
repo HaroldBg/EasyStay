@@ -24,7 +24,7 @@ class StoreReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'email',
+            'email' => 'required|email',
             'chambre_id' => 'required|exists:chambres,id',
             'date_deb' => 'required|date|after_or_equal:today',
             'date_fin' => 'required|date|after:date_debut',
@@ -35,6 +35,7 @@ class StoreReservationRequest extends FormRequest
     {
         return [
             'email.email' => 'Mail invalide',
+            'email.required' => 'Email requis',
 //            "user_id.exists"=>"L'utilisateur n'existe pas.",
             "hotel_id.exists"=>"L'hôtel n'existe pas.",
             "chambre_id.exists"=>"La chambre est non existante",

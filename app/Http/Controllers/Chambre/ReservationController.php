@@ -79,6 +79,7 @@ class ReservationController extends Controller
             'tarif_app'=>$tarif_app,
         ]);
         return response()->json([
+            'error' => false,
             'message' => 'Réservation réussie.',
             'reservation' => $reservation,
         ], 200);
