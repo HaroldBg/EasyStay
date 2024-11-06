@@ -96,6 +96,8 @@ class ChambreController extends Controller
             ]);
         }
         $room->chambreImage;
+        $room->hotel;
+        $room->typesChambre->tarifications;
         return response()->json([
             "error"=>false,
             "message"=>"Chambre",
@@ -178,7 +180,7 @@ class ChambreController extends Controller
         $nmb_per = $request->nmb_per;
 
         // Fetch rooms that are not reserved in the specified date range
-        $availableRooms = Chambre::query() 
+        $availableRooms = Chambre::query()
             ->whereHas('typesChambre', function ($query) use ($nmb_per) {
                 $query->where('capacity', '>=', $nmb_per);
             })
@@ -196,14 +198,20 @@ class ChambreController extends Controller
                 $query->whereRaw("DATE_FORMAT(date_deb, '%d-%m') <= ?", [$dayMonthDeb])
                     ->whereRaw("DATE_FORMAT(date_fin, '%d-%m') >= ?", [$dayMonthFin]);
             }, 'hotel'])
+            ->with('chambreImage')
             ->get();
 
         // Calculate the total tariff for each room based on the number of nights
-        $availableRooms->each(function ($room) use ($dateDeb, $dateFin) {
+        $availableRooms->each(function ($room) use ($dateDeb, $dateFin,$nmb_per) {
             $numberOfNights = $dateFin->diffInDays($dateDeb);
             if ($room->typesChambre && $room->typesChambre->tarifications->isNotEmpty()) {
                 $tarifApplicable = $room->typesChambre->tarifications->first()->prix * $numberOfNights;
-                $room->tarif_applicable = $tarifApplicable;
+                $room->tarif_total = $tarifApplicable;
+                $room->nuit = $numberOfNights;
+                $room->tarif = $room->typesChambre->tarifications->first()->prix;
+                $room->dateDebR = $dateDeb;
+                $room->dateFinR = $dateFin;
+                $room->nmb_per = $nmb_per;
             } else {
                 $room->tarif_applicable = null; // Set null if no applicable tariff found
             }

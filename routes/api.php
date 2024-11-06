@@ -58,7 +58,6 @@ Route::prefix("/chambre/type")->middleware("auth:sanctum")->group(function (){
 });
 Route::prefix("/chambre")->middleware("auth:sanctum")->group(function (){
     Route::post("store",[ChambreController::class,"storeChambre"]);
-    Route::get("show/{id:id}",[ChambreController::class,"showChambre"]);
     Route::get("showAll",[ChambreController::class,"showAllRoom"]);
     Route::get("showAllRoomWithTarifs",[ChambreController::class,"showAllRoomWithTarifs"]);
     Route::get("showRoomWithTarifs/{id:id}",[ChambreController::class,"showRommWithTarifs"]);
@@ -69,9 +68,13 @@ Route::prefix("/chambre/tarification")->middleware("auth:sanctum")->group(functi
     Route::post("store",[TarificationController::class,"storeTarif"]);
     Route::get("showAllTarif",[TarificationController::class,"showAllTarif"]);
 });
-Route::post("/chambre/searchRoom",[ChambreController::class,"getAvailableRooms"]);
+Route::prefix("/chambre")->group(function (){
+    Route::get("show/{id:id}",[ChambreController::class,"showChambre"]);
+    Route::post("searchRoom",[ChambreController::class,"getAvailableRooms"]);
+});
 
 Route::prefix("/reservation")->middleware("auth:sanctum")->group(function (){
+    Route::post("/getReserv",[ReservationController::class,"showReservationByHotelUser"]);
 });
 
 Route::post("/reservation/storeReserv",[ReservationController::class,"storeReservation"]);

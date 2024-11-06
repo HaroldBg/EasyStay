@@ -29,7 +29,7 @@ class Hotel extends Model
     ];
     public function user() : HasMany
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(User::class,'hotels_id');
     }
     //room
     public function room():HasMany

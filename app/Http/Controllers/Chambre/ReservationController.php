@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Chambre;
 
 use App\Enums\ReservationStatus;
+use App\Enums\UserRoles;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Chambre\StoreReservationRequest;
 use App\Models\Chambre;
@@ -68,12 +69,12 @@ class ReservationController extends Controller
         /*dd($tarif_app);*/
         // let insert reservation
         $reservation  = Reservation::create([
-            "user_id"=>Auth::id(),
+            "user_id"=>$request->user_id,
             'email' => $request->email,
             'chambre_id' => $request->chambre_id,
             'date_deb' => $request->date_deb,
             'date_fin' => $request->date_fin,
-            'status' => ReservationStatus::WAITING,
+            'status' => ReservationStatus::CONFIRMED,
             'nmb_per' => $request->nmb_per,
             'tarif_app'=>$tarif_app,
         ]);
@@ -81,5 +82,24 @@ class ReservationController extends Controller
             'message' => 'Réservation réussie.',
             'reservation' => $reservation,
         ], 200);
+    }
+
+    // let show all reservation by user's hotel authentificated
+    public function showReservationByHotelUser()
+    {
+        $user = Auth::user();
+        abort_if(!in_array($user->role, [UserRoles::ADMIN, UserRoles::FRONTDESKAGENT, UserRoles::SUDO]), 403, "Accès Refusé");
+        // Récupérer l'hôtel de l'utilisateur connecté
+        $hotelId = $user->hotels_id;
+
+        // Récupérer les réservations associées aux chambres de cet hôtel
+        $reservations = Reservation::query()
+            ->whereHas('chambre', function($query) use ($hotelId) {
+                $query->where('hotel_id', $hotelId);
+            })
+            ->with(['chambre', 'user'])
+            ->get();
+
+        return response()->json($reservations);
     }
 }

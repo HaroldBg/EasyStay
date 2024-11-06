@@ -109,9 +109,8 @@ class AuthController extends Controller
         $user = Auth::user();
         $token = $user->createToken($request->getClientIp())->plainTextToken;
         //let check user's role
-        if ($user->role == UserRoles::ADMIN->value || $user->role == UserRoles::CLIENT->value){
+        if ($user->role->value == UserRoles::ADMIN->value || $user->role->value == UserRoles::FRONTDESKAGENT->value){
             $hotel = Hotel::query()->find($user->hotels_id);
-            Session::put('hotel',$user->hotels_id);
             return response()->json([
                 "error"=>false,
                 "message"=>"vous êtes authentifié",
