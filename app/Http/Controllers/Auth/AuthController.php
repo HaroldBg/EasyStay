@@ -30,15 +30,28 @@ class AuthController extends Controller
      * @OA\Post(
      *     path="/api/login",
      *     summary="Connexion Utilisateur",
-     *     description="Connexion d'un utilisateur et retour d'un token ",
+     *     description="Connexion d'un utilisateur et retour d'un token",
      *     operationId="login",
      *     tags={"Auth"},
-     *     @OA\RequestBody(
+     *     @OA\Parameter(
+     *         name="email",
+     *         in="query",
      *         required=true,
-     *         description="Identifiants de connexion",
+     *         description="Adresse email de l'utilisateur",
+     *         @OA\Schema(type="string", format="email", example="user@example.com")
+     *     ),
+     *     @OA\Parameter(
+     *         name="password",
+     *         in="query",
+     *         required=true,
+     *         description="Mot de passe de l'utilisateur",
+     *         @OA\Schema(type="string", format="password", example="password123")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=false,
+     *         description="Identifiants de connexion (facultatif si fournis en paramètres)",
      *         @OA\JsonContent(
      *             type="object",
-     *             required={"email", "password"},
      *             @OA\Property(
      *                 property="email",
      *                 type="string",
@@ -55,44 +68,45 @@ class AuthController extends Controller
      *             )
      *         )
      *     ),
-     *    @OA\Response(
-     *          response=200,
-     *          description="Login successful",
-     *          @OA\JsonContent(
-     *              type="object",
-     *              @OA\Property(property="error", type="boolean", example=false, description="Indicates if there was an error"),
-     *              @OA\Property(property="message", type="string", example="vous êtes authentifié", description="Authentication message"),
-     *              @OA\Property(
-     *                  property="user",
-     *                  type="object",
-     *                  @OA\Property(property="id", type="integer", example=1),
-     *                  @OA\Property(property="nom", type="string", example="Sudo"),
-     *                  @OA\Property(property="prenom", type="string", example="Admin"),
-     *                  @OA\Property(property="email", type="string", example="sudo@admin.hotel"),
-     *                  @OA\Property(property="adresse", type="string", nullable=true, example=null),
-     *                  @OA\Property(property="tel", type="string", example="+229 91461545"),
-     *                  @OA\Property(property="picture", type="string", example="images/blank_profile.jpeg"),
-     *                  @OA\Property(property="role", type="string", example="Sudo"),
-     *                  @OA\Property(property="status", type="string", example="Enable"),
-     *                  @OA\Property(property="hotels_id", type="integer", nullable=true, example=null),
-     *                  @OA\Property(property="email_verified_at", type="string", nullable=true, example=null),
-     *                  @OA\Property(property="created_at", type="string", format="date-time", example="2024-10-25T01:08:30.000000Z"),
-     *                  @OA\Property(property="updated_at", type="string", format="date-time", example="2024-10-25T01:08:30.000000Z")
-     *              ),
-     *              @OA\Property(property="token_type", type="string", example="Bearer"),
-     *              @OA\Property(property="token", type="string", example="5|2YaDKuz5UPdqAR2RoVOb9sxbz92a9b5JJGvGzgGs29e54f58")
-     *          )
-     *      ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Connexion réussie",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="boolean", example=false, description="Indique s'il y a une erreur"),
+     *             @OA\Property(property="message", type="string", example="Vous êtes authentifié", description="Message d'authentification"),
+     *             @OA\Property(
+     *                 property="user",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="nom", type="string", example="Sudo"),
+     *                 @OA\Property(property="prenom", type="string", example="Admin"),
+     *                 @OA\Property(property="email", type="string", example="sudo@admin.hotel"),
+     *                 @OA\Property(property="adresse", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="tel", type="string", example="+229 91461545"),
+     *                 @OA\Property(property="picture", type="string", example="images/blank_profile.jpeg"),
+     *                 @OA\Property(property="role", type="string", example="Sudo"),
+     *                 @OA\Property(property="status", type="string", example="Enable"),
+     *                 @OA\Property(property="hotels_id", type="integer", nullable=true, example=null),
+     *                 @OA\Property(property="email_verified_at", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2024-10-25T01:08:30.000000Z"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2024-10-25T01:08:30.000000Z")
+     *             ),
+     *             @OA\Property(property="token_type", type="string", example="Bearer"),
+     *             @OA\Property(property="token", type="string", example="5|2YaDKuz5UPdqAR2RoVOb9sxbz92a9b5JJGvGzgGs29e54f58")
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=401,
-     *         description="Unauthorized - Invalid credentials"
+     *         description="Non autorisé - Identifiants invalides"
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Validation error - Missing required fields"
+     *         description="Erreur de validation - Champs requis manquants"
      *     )
      * )
      */
+
     //login
     public function login(LoginRequest $request): JsonResponse
     {
@@ -102,7 +116,7 @@ class AuthController extends Controller
         if (!$attempt) {
             return response()->json([
                 "error"=>true,
-                "message"=>'Vérifier vos informations de connexion',
+                "message"=>'Email ou mot de passe incorrect!',
             ],401);
         }
 
@@ -130,60 +144,80 @@ class AuthController extends Controller
     }
     /**
      * @OA\Post(
-     *     path="/api/auth/storeAdmin",
-     *     summary="Enregistrement d'un nouvel Administrateur",
-     *     description="Crée un nouveau compte utilisateur administrateur et renvoie les détails de l'utilisateur",
-     *     operationId="storeAdmin",
+     *     path="/api/auth/registerUser",
+     *     summary="Enregistrement d'un nouvel utilisateur",
+     *     description="Crée un nouveau compte utilisateur et renvoie les détails de l'utilisateur",
+     *     operationId="registerUser",
      *     tags={"Auth"},
-     *     @OA\RequestBody(
+     *     @OA\Parameter(
+     *         name="nom",
+     *         in="query",
      *         required=true,
-     *         description="Données d'enregistrement de l'administrateur",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             required={"nom", "prenom", "email", "password", "tel"},
-     *             @OA\Property(property="nom", type="string", example="Sudo", description="User's last name"),
-     *             @OA\Property(property="prenom", type="string", example="Admin", description="User's first name"),
-     *             @OA\Property(property="email", type="string", format="email", example="sudo@admin.hotel", description="User's email address"),
-     *             @OA\Property(property="adresse", type="string", nullable=true, example="123 Main St", description="User's address"),
-     *             @OA\Property(property="tel", type="string", example="+229 91461545", description="User's phone number"),
-     *             @OA\Property(property="password", type="string", format="password", example="password123", description="User's password"),
-     *             @OA\Property(property="picture", type="string", format="binary", description="User's profile picture")
-     *         )
+     *         description="Nom de famille de l'utilisateur",
+     *         @OA\Schema(type="string", example="Doe")
+     *     ),
+     *     @OA\Parameter(
+     *         name="prenom",
+     *         in="query",
+     *         required=true,
+     *         description="Prénom de l'utilisateur",
+     *         @OA\Schema(type="string", example="John")
+     *     ),
+     *     @OA\Parameter(
+     *         name="email",
+     *         in="query",
+     *         required=true,
+     *         description="Adresse email de l'utilisateur",
+     *         @OA\Schema(type="string", format="email", example="john.doe@example.com")
+     *     ),
+     *     @OA\Parameter(
+     *         name="tel",
+     *         in="query",
+     *         required=true,
+     *         description="Numéro de téléphone de l'utilisateur",
+     *         @OA\Schema(type="string", example="+33 612345678")
+     *     ),
+     *     @OA\Parameter(
+     *         name="password",
+     *         in="query",
+     *         required=true,
+     *         description="Mot de passe de l'utilisateur",
+     *         @OA\Schema(type="string", format="password", example="SecurePass123")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Admin account successfully created",
+     *         description="Utilisateur enregistré avec succès",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="error", type="boolean", example=false, description="Indicates if there was an error"),
-     *             @OA\Property(property="message", type="string", example="votre compte a été créé avec succès.", description="Success message"),
+     *             @OA\Property(property="error", type="boolean", example=false, description="Indique s'il y a une erreur"),
+     *             @OA\Property(property="message", type="string", example="Votre compte a été créé avec succès.", description="Message de succès"),
      *             @OA\Property(
      *                 property="user",
      *                 type="object",
      *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="nom", type="string", example="Sudo"),
-     *                 @OA\Property(property="prenom", type="string", example="Admin"),
-     *                 @OA\Property(property="email", type="string", example="sudo@admin.hotel"),
-     *                 @OA\Property(property="adresse", type="string", nullable=true, example="123 Main St"),
-     *                 @OA\Property(property="tel", type="string", example="+229 91461545"),
-     *                 @OA\Property(property="picture", type="string", example="images/Avatar/Avatar_Sudo_Admin_1633021012.jpeg"),
-     *                 @OA\Property(property="role", type="string", example="Admin"),
-     *                 @OA\Property(property="status", type="string", example="EMAIL_CONFIRMATION_PENDING"),
-     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2024-10-25T01:08:30.000000Z"),
-     *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2024-10-25T01:08:30.000000Z")
+     *                 @OA\Property(property="nom", type="string", example="Doe"),
+     *                 @OA\Property(property="prenom", type="string", example="John"),
+     *                 @OA\Property(property="email", type="string", example="john.doe@example.com"),
+     *                 @OA\Property(property="adresse", type="string", nullable=true, example="45 Rue de Paris"),
+     *                 @OA\Property(property="tel", type="string", example="+33 612345678"),
+     *                 @OA\Property(property="role", type="string", example="User"),
+     *                 @OA\Property(property="status", type="string", example="ACTIVE"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2024-11-15T01:08:30.000000Z"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2024-11-15T01:08:30.000000Z")
      *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=400,
-     *         description="Bad request - Invalid input"
+     *         description="Requête incorrecte - Données non valides"
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Validation error - Missing required fields"
+     *         description="Erreur de validation - Champs requis manquants"
      *     )
      * )
      */
+
     // register Admin user for hostel
     public function registerAdmin(StoreUserRequest $request) : JsonResponse
     {
@@ -218,20 +252,54 @@ class AuthController extends Controller
      *     description="Crée un nouveau compte utilisateur client et renvoie les détails de l'utilisateur",
      *     operationId="storeClient",
      *     tags={"Auth"},
-     *     @OA\RequestBody(
+     *     @OA\Parameter(
+     *         name="nom",
+     *         in="query",
      *         required=true,
-     *         description="Données de création client",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             required={"nom", "prenom", "email", "password", "tel"},
-     *             @OA\Property(property="nom", type="string", example="Sudo", description="User's last name"),
-     *             @OA\Property(property="prenom", type="string", example="Admin", description="User's first name"),
-     *             @OA\Property(property="email", type="string", format="email", example="sudo@client.hotel", description="User's email address"),
-     *             @OA\Property(property="adresse", type="string", nullable=true, example="123 Main St", description="User's address"),
-     *             @OA\Property(property="tel", type="string", example="+229 91461545", description="User's phone number"),
-     *             @OA\Property(property="password", type="string", format="password", example="password123", description="User's password"),
-     *             @OA\Property(property="picture", type="string", format="binary", description="User's profile picture")
-     *         )
+     *         description="Nom de famille du client",
+     *         @OA\Schema(type="string", example="Sudo")
+     *     ),
+     *     @OA\Parameter(
+     *         name="prenom",
+     *         in="query",
+     *         required=true,
+     *         description="Prénom du client",
+     *         @OA\Schema(type="string", example="Admin")
+     *     ),
+     *     @OA\Parameter(
+     *         name="email",
+     *         in="query",
+     *         required=true,
+     *         description="Adresse email du client",
+     *         @OA\Schema(type="string", format="email", example="sudo@client.hotel")
+     *     ),
+     *     @OA\Parameter(
+     *         name="adresse",
+     *         in="query",
+     *         required=false,
+     *         description="Adresse du client",
+     *         @OA\Schema(type="string", nullable=true, example="123 Main St")
+     *     ),
+     *     @OA\Parameter(
+     *         name="tel",
+     *         in="query",
+     *         required=true,
+     *         description="Numéro de téléphone du client",
+     *         @OA\Schema(type="string", example="+229 91461545")
+     *     ),
+     *     @OA\Parameter(
+     *         name="password",
+     *         in="query",
+     *         required=true,
+     *         description="Mot de passe du client",
+     *         @OA\Schema(type="string", format="password", example="password123")
+     *     ),
+     *     @OA\Parameter(
+     *         name="picture",
+     *         in="query",
+     *         required=false,
+     *         description="Image de profil du client",
+     *         @OA\Schema(type="string", format="binary", example="images/profile.jpg")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -239,7 +307,7 @@ class AuthController extends Controller
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="error", type="boolean", example=false, description="Indicates if there was an error"),
-     *             @OA\Property(property="message", type="string", example="votre compte a été créé avec succès.", description="Success message"),
+     *             @OA\Property(property="message", type="string", example="Votre compte a été créé avec succès.", description="Message de succès"),
      *             @OA\Property(
      *                 property="user",
      *                 type="object",
@@ -259,14 +327,15 @@ class AuthController extends Controller
      *     ),
      *     @OA\Response(
      *         response=400,
-     *         description="Bad request - Invalid input"
+     *         description="Requête incorrecte - Données non valides"
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Validation error - Missing required fields"
+     *         description="Erreur de validation - Champs requis manquants"
      *     )
      * )
      */
+
     public function storeClient(StoreUserRequest $request) : JsonResponse
     {
         $validatedData = $request->validated();
@@ -300,20 +369,54 @@ class AuthController extends Controller
      *     description="Creates a new front desk agent account. Only admin can perform this action.",
      *     operationId="storeFrontDeskAgent",
      *     tags={"Auth"},
-     *     @OA\RequestBody(
+     *     @OA\Parameter(
+     *         name="nom",
+     *         in="query",
      *         required=true,
-     *         description="Front desk agent registration data",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             required={"nom", "prenom", "email", "password", "tel"},
-     *             @OA\Property(property="nom", type="string", example="Sudo", description="Agent's last name"),
-     *             @OA\Property(property="prenom", type="string", example="Admin", description="Agent's first name"),
-     *             @OA\Property(property="email", type="string", format="email", example="sudo@frontdesk.hotel", description="Agent's email address"),
-     *             @OA\Property(property="adresse", type="string", nullable=true, example="123 Main St", description="Agent's address"),
-     *             @OA\Property(property="tel", type="string", example="+229 91461545", description="Agent's phone number"),
-     *             @OA\Property(property="password", type="string", format="password", example="password123", description="Agent's password"),
-     *             @OA\Property(property="picture", type="string", format="binary", description="Agent's profile picture")
-     *         )
+     *         description="Last name of the front desk agent",
+     *         @OA\Schema(type="string", example="Sudo")
+     *     ),
+     *     @OA\Parameter(
+     *         name="prenom",
+     *         in="query",
+     *         required=true,
+     *         description="First name of the front desk agent",
+     *         @OA\Schema(type="string", example="Admin")
+     *     ),
+     *     @OA\Parameter(
+     *         name="email",
+     *         in="query",
+     *         required=true,
+     *         description="Email address of the front desk agent",
+     *         @OA\Schema(type="string", format="email", example="sudo@frontdesk.hotel")
+     *     ),
+     *     @OA\Parameter(
+     *         name="adresse",
+     *         in="query",
+     *         required=false,
+     *         description="Address of the front desk agent",
+     *         @OA\Schema(type="string", nullable=true, example="123 Main St")
+     *     ),
+     *     @OA\Parameter(
+     *         name="tel",
+     *         in="query",
+     *         required=true,
+     *         description="Phone number of the front desk agent",
+     *         @OA\Schema(type="string", example="+229 91461545")
+     *     ),
+     *     @OA\Parameter(
+     *         name="password",
+     *         in="query",
+     *         required=true,
+     *         description="Password for the front desk agent",
+     *         @OA\Schema(type="string", format="password", example="password123")
+     *     ),
+     *     @OA\Parameter(
+     *         name="picture",
+     *         in="query",
+     *         required=false,
+     *         description="Profile picture of the front desk agent",
+     *         @OA\Schema(type="string", format="binary", example="images/profile.jpg")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -354,6 +457,7 @@ class AuthController extends Controller
      *     )
      * )
      */
+
     public function storeFrontDeskAgent(StoreUserRequest $request) : JsonResponse
     {
         $user = Auth::user();
@@ -364,8 +468,6 @@ class AuthController extends Controller
         $picture = $request->file('picture');
         $fileName = "Avatar_".$request->nom ."_". $request->prenom ."_". time().".".$picture->getClientOriginalExtension();
         $filePath = $picture->storeAs('images/Avatar',$fileName,'public');
-        // get hotel id
-        $user = User::find($user->id);
 //        dd($user->hotels_id);
         $user = User::query()->create([
             'nom' => $request->nom,

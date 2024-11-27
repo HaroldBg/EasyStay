@@ -15,18 +15,38 @@
                     "Auth"
                 ],
                 "summary": "Connexion Utilisateur",
-                "description": "Connexion d'un utilisateur et retour d'un token ",
+                "description": "Connexion d'un utilisateur et retour d'un token",
                 "operationId": "login",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Adresse email de l'utilisateur",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "email",
+                            "example": "user@example.com"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "Mot de passe de l'utilisateur",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "password",
+                            "example": "password123"
+                        }
+                    }
+                ],
                 "requestBody": {
-                    "description": "Identifiants de connexion",
-                    "required": true,
+                    "description": "Identifiants de connexion (facultatif si fournis en paramètres)",
+                    "required": false,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "email",
-                                    "password"
-                                ],
                                 "properties": {
                                     "email": {
                                         "description": "Adresse email de l'utilisateur",
@@ -48,20 +68,20 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Login successful",
+                        "description": "Connexion réussie",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "error": {
-                                            "description": "Indicates if there was an error",
+                                            "description": "Indique s'il y a une erreur",
                                             "type": "boolean",
                                             "example": false
                                         },
                                         "message": {
-                                            "description": "Authentication message",
+                                            "description": "Message d'authentification",
                                             "type": "string",
-                                            "example": "vous êtes authentifié"
+                                            "example": "Vous êtes authentifié"
                                         },
                                         "user": {
                                             "properties": {
@@ -140,96 +160,92 @@
                         }
                     },
                     "401": {
-                        "description": "Unauthorized - Invalid credentials"
+                        "description": "Non autorisé - Identifiants invalides"
                     },
                     "422": {
-                        "description": "Validation error - Missing required fields"
+                        "description": "Erreur de validation - Champs requis manquants"
                     }
                 }
             }
         },
-        "/api/auth/storeAdmin": {
+        "/api/auth/registerUser": {
             "post": {
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Enregistrement d'un nouvel Administrateur",
-                "description": "Crée un nouveau compte utilisateur administrateur et renvoie les détails de l'utilisateur",
-                "operationId": "storeAdmin",
-                "requestBody": {
-                    "description": "Données d'enregistrement de l'administrateur",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "nom",
-                                    "prenom",
-                                    "email",
-                                    "password",
-                                    "tel"
-                                ],
-                                "properties": {
-                                    "nom": {
-                                        "description": "User's last name",
-                                        "type": "string",
-                                        "example": "Sudo"
-                                    },
-                                    "prenom": {
-                                        "description": "User's first name",
-                                        "type": "string",
-                                        "example": "Admin"
-                                    },
-                                    "email": {
-                                        "description": "User's email address",
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "sudo@admin.hotel"
-                                    },
-                                    "adresse": {
-                                        "description": "User's address",
-                                        "type": "string",
-                                        "example": "123 Main St",
-                                        "nullable": true
-                                    },
-                                    "tel": {
-                                        "description": "User's phone number",
-                                        "type": "string",
-                                        "example": "+229 91461545"
-                                    },
-                                    "password": {
-                                        "description": "User's password",
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123"
-                                    },
-                                    "picture": {
-                                        "description": "User's profile picture",
-                                        "type": "string",
-                                        "format": "binary"
-                                    }
-                                },
-                                "type": "object"
-                            }
+                "summary": "Enregistrement d'un nouvel utilisateur",
+                "description": "Crée un nouveau compte utilisateur et renvoie les détails de l'utilisateur",
+                "operationId": "registerUser",
+                "parameters": [
+                    {
+                        "name": "nom",
+                        "in": "query",
+                        "description": "Nom de famille de l'utilisateur",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Doe"
+                        }
+                    },
+                    {
+                        "name": "prenom",
+                        "in": "query",
+                        "description": "Prénom de l'utilisateur",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "John"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Adresse email de l'utilisateur",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "email",
+                            "example": "john.doe@example.com"
+                        }
+                    },
+                    {
+                        "name": "tel",
+                        "in": "query",
+                        "description": "Numéro de téléphone de l'utilisateur",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "+33 612345678"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "Mot de passe de l'utilisateur",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "password",
+                            "example": "SecurePass123"
                         }
                     }
-                },
+                ],
                 "responses": {
                     "200": {
-                        "description": "Admin account successfully created",
+                        "description": "Utilisateur enregistré avec succès",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
                                         "error": {
-                                            "description": "Indicates if there was an error",
+                                            "description": "Indique s'il y a une erreur",
                                             "type": "boolean",
                                             "example": false
                                         },
                                         "message": {
-                                            "description": "Success message",
+                                            "description": "Message de succès",
                                             "type": "string",
-                                            "example": "votre compte a été créé avec succès."
+                                            "example": "Votre compte a été créé avec succès."
                                         },
                                         "user": {
                                             "properties": {
@@ -239,46 +255,42 @@
                                                 },
                                                 "nom": {
                                                     "type": "string",
-                                                    "example": "Sudo"
+                                                    "example": "Doe"
                                                 },
                                                 "prenom": {
                                                     "type": "string",
-                                                    "example": "Admin"
+                                                    "example": "John"
                                                 },
                                                 "email": {
                                                     "type": "string",
-                                                    "example": "sudo@admin.hotel"
+                                                    "example": "john.doe@example.com"
                                                 },
                                                 "adresse": {
                                                     "type": "string",
-                                                    "example": "123 Main St",
+                                                    "example": "45 Rue de Paris",
                                                     "nullable": true
                                                 },
                                                 "tel": {
                                                     "type": "string",
-                                                    "example": "+229 91461545"
-                                                },
-                                                "picture": {
-                                                    "type": "string",
-                                                    "example": "images/Avatar/Avatar_Sudo_Admin_1633021012.jpeg"
+                                                    "example": "+33 612345678"
                                                 },
                                                 "role": {
                                                     "type": "string",
-                                                    "example": "Admin"
+                                                    "example": "User"
                                                 },
                                                 "status": {
                                                     "type": "string",
-                                                    "example": "EMAIL_CONFIRMATION_PENDING"
+                                                    "example": "ACTIVE"
                                                 },
                                                 "created_at": {
                                                     "type": "string",
                                                     "format": "date-time",
-                                                    "example": "2024-10-25T01:08:30.000000Z"
+                                                    "example": "2024-11-15T01:08:30.000000Z"
                                                 },
                                                 "updated_at": {
                                                     "type": "string",
                                                     "format": "date-time",
-                                                    "example": "2024-10-25T01:08:30.000000Z"
+                                                    "example": "2024-11-15T01:08:30.000000Z"
                                                 }
                                             },
                                             "type": "object"
@@ -290,10 +302,10 @@
                         }
                     },
                     "400": {
-                        "description": "Bad request - Invalid input"
+                        "description": "Requête incorrecte - Données non valides"
                     },
                     "422": {
-                        "description": "Validation error - Missing required fields"
+                        "description": "Erreur de validation - Champs requis manquants"
                     }
                 }
             }
@@ -306,64 +318,82 @@
                 "summary": "Enregistrement client",
                 "description": "Crée un nouveau compte utilisateur client et renvoie les détails de l'utilisateur",
                 "operationId": "storeClient",
-                "requestBody": {
-                    "description": "Données de création client",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "nom",
-                                    "prenom",
-                                    "email",
-                                    "password",
-                                    "tel"
-                                ],
-                                "properties": {
-                                    "nom": {
-                                        "description": "User's last name",
-                                        "type": "string",
-                                        "example": "Sudo"
-                                    },
-                                    "prenom": {
-                                        "description": "User's first name",
-                                        "type": "string",
-                                        "example": "Admin"
-                                    },
-                                    "email": {
-                                        "description": "User's email address",
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "sudo@client.hotel"
-                                    },
-                                    "adresse": {
-                                        "description": "User's address",
-                                        "type": "string",
-                                        "example": "123 Main St",
-                                        "nullable": true
-                                    },
-                                    "tel": {
-                                        "description": "User's phone number",
-                                        "type": "string",
-                                        "example": "+229 91461545"
-                                    },
-                                    "password": {
-                                        "description": "User's password",
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123"
-                                    },
-                                    "picture": {
-                                        "description": "User's profile picture",
-                                        "type": "string",
-                                        "format": "binary"
-                                    }
-                                },
-                                "type": "object"
-                            }
+                "parameters": [
+                    {
+                        "name": "nom",
+                        "in": "query",
+                        "description": "Nom de famille du client",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Sudo"
+                        }
+                    },
+                    {
+                        "name": "prenom",
+                        "in": "query",
+                        "description": "Prénom du client",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Admin"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Adresse email du client",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "email",
+                            "example": "sudo@client.hotel"
+                        }
+                    },
+                    {
+                        "name": "adresse",
+                        "in": "query",
+                        "description": "Adresse du client",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "123 Main St",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "tel",
+                        "in": "query",
+                        "description": "Numéro de téléphone du client",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "+229 91461545"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "Mot de passe du client",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "password",
+                            "example": "password123"
+                        }
+                    },
+                    {
+                        "name": "picture",
+                        "in": "query",
+                        "description": "Image de profil du client",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "binary",
+                            "example": "images/profile.jpg"
                         }
                     }
-                },
+                ],
                 "responses": {
                     "200": {
                         "description": "Client account successfully created",
@@ -377,9 +407,9 @@
                                             "example": false
                                         },
                                         "message": {
-                                            "description": "Success message",
+                                            "description": "Message de succès",
                                             "type": "string",
-                                            "example": "votre compte a été créé avec succès."
+                                            "example": "Votre compte a été créé avec succès."
                                         },
                                         "user": {
                                             "properties": {
@@ -440,10 +470,10 @@
                         }
                     },
                     "400": {
-                        "description": "Bad request - Invalid input"
+                        "description": "Requête incorrecte - Données non valides"
                     },
                     "422": {
-                        "description": "Validation error - Missing required fields"
+                        "description": "Erreur de validation - Champs requis manquants"
                     }
                 }
             }
@@ -456,64 +486,82 @@
                 "summary": "Register a new front desk agent",
                 "description": "Creates a new front desk agent account. Only admin can perform this action.",
                 "operationId": "storeFrontDeskAgent",
-                "requestBody": {
-                    "description": "Front desk agent registration data",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "nom",
-                                    "prenom",
-                                    "email",
-                                    "password",
-                                    "tel"
-                                ],
-                                "properties": {
-                                    "nom": {
-                                        "description": "Agent's last name",
-                                        "type": "string",
-                                        "example": "Sudo"
-                                    },
-                                    "prenom": {
-                                        "description": "Agent's first name",
-                                        "type": "string",
-                                        "example": "Admin"
-                                    },
-                                    "email": {
-                                        "description": "Agent's email address",
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "sudo@frontdesk.hotel"
-                                    },
-                                    "adresse": {
-                                        "description": "Agent's address",
-                                        "type": "string",
-                                        "example": "123 Main St",
-                                        "nullable": true
-                                    },
-                                    "tel": {
-                                        "description": "Agent's phone number",
-                                        "type": "string",
-                                        "example": "+229 91461545"
-                                    },
-                                    "password": {
-                                        "description": "Agent's password",
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123"
-                                    },
-                                    "picture": {
-                                        "description": "Agent's profile picture",
-                                        "type": "string",
-                                        "format": "binary"
-                                    }
-                                },
-                                "type": "object"
-                            }
+                "parameters": [
+                    {
+                        "name": "nom",
+                        "in": "query",
+                        "description": "Last name of the front desk agent",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Sudo"
+                        }
+                    },
+                    {
+                        "name": "prenom",
+                        "in": "query",
+                        "description": "First name of the front desk agent",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Admin"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Email address of the front desk agent",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "email",
+                            "example": "sudo@frontdesk.hotel"
+                        }
+                    },
+                    {
+                        "name": "adresse",
+                        "in": "query",
+                        "description": "Address of the front desk agent",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "123 Main St",
+                            "nullable": true
+                        }
+                    },
+                    {
+                        "name": "tel",
+                        "in": "query",
+                        "description": "Phone number of the front desk agent",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "+229 91461545"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "Password for the front desk agent",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "password",
+                            "example": "password123"
+                        }
+                    },
+                    {
+                        "name": "picture",
+                        "in": "query",
+                        "description": "Profile picture of the front desk agent",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "binary",
+                            "example": "images/profile.jpg"
                         }
                     }
-                },
+                ],
                 "responses": {
                     "200": {
                         "description": "Front desk agent account successfully created",
@@ -647,12 +695,2028 @@
                     }
                 ]
             }
+        },
+        "/api/chambre/store": {
+            "post": {
+                "tags": [
+                    "Chambre"
+                ],
+                "summary": "Créer une chambre",
+                "description": "Crée une nouvelle chambre avec des images dans un hôtel spécifique.",
+                "operationId": "storeChambre",
+                "parameters": [
+                    {
+                        "name": "num",
+                        "in": "query",
+                        "description": "Numéro de la chambre",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "101"
+                        }
+                    },
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "description": "Description de la chambre",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Une belle chambre avec vue sur la mer"
+                        }
+                    },
+                    {
+                        "name": "hotel_id",
+                        "in": "query",
+                        "description": "Identifiant de l'hôtel (doit exister dans la table `hotels`)",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "users_id",
+                        "in": "query",
+                        "description": "Identifiant de l'utilisateur associé (doit exister dans la table `users`)",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2
+                        }
+                    },
+                    {
+                        "name": "types_chambres_id",
+                        "in": "query",
+                        "description": "Identifiant du type de chambre (doit exister dans la table `types_chambres`)",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "images",
+                        "in": "query",
+                        "description": "Liste des images de la chambre à uploader",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "format": "binary",
+                                "example": "room_image.jpg"
+                            }
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "images": {
+                                        "description": "Liste des images de la chambre à uploader",
+                                        "type": "array",
+                                        "items": {
+                                            "description": "Image fichier",
+                                            "type": "string",
+                                            "format": "binary",
+                                            "example": "room_image.jpg"
+                                        }
+                                    },
+                                    "num": {
+                                        "description": "Numéro de la chambre",
+                                        "type": "string",
+                                        "example": "101"
+                                    },
+                                    "description": {
+                                        "description": "Description de la chambre",
+                                        "type": "string",
+                                        "example": "Une belle chambre avec vue sur la mer"
+                                    },
+                                    "hotel_id": {
+                                        "description": "Identifiant de l'hôtel (doit exister dans la table `hotels`)",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "users_id": {
+                                        "description": "Identifiant de l'utilisateur associé (doit exister dans la table `users`)",
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "types_chambres_id": {
+                                        "description": "Identifiant du type de chambre (doit exister dans la table `types_chambres`)",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Chambre créée avec succès.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Chambre enregistrer avec succès."
+                                        },
+                                        "room": {
+                                            "properties": {
+                                                "num": {
+                                                    "type": "string",
+                                                    "example": "101"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Une belle chambre avec vue sur la mer"
+                                                },
+                                                "hotel_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "users_id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "types_chambres_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "statut": {
+                                                    "type": "string",
+                                                    "example": "AVAILABLE"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "images": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "image_path": {
+                                                        "type": "string",
+                                                        "example": "images/Chambre/Room_101_1688156037_1234.jpg"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Erreur lors de la validation ou des données.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Chambre déjà existante ou images non uploadées."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès refusé.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Accès Refusé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/chambre/showAll": {
+            "get": {
+                "tags": [
+                    "Chambre"
+                ],
+                "summary": "Obtenir toutes les chambres pour l'hôtel de l'utilisateur authentifié",
+                "operationId": "7afd6a3ab7936878d5ab494812f2ce91",
+                "responses": {
+                    "200": {
+                        "description": "Liste des chambres de votre hôtel",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Liste des chambres de votre hôtel"
+                                        },
+                                        "chambres": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "num": {
+                                                        "type": "string",
+                                                        "example": "101"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Chambre avec vue sur la mer"
+                                                    },
+                                                    "statut": {
+                                                        "type": "string",
+                                                        "example": "AVAILABLE"
+                                                    },
+                                                    "images": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string",
+                                                            "format": "binary"
+                                                        }
+                                                    },
+                                                    "type_chambre": {
+                                                        "type": "string",
+                                                        "example": "Double"
+                                                    },
+                                                    "hotel_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès refusé pour ce rôle",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Accès Refusé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Aucune chambre disponible",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No room disponible"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/chambre/show/{id:id}": {
+            "get": {
+                "tags": [
+                    "Chambre"
+                ],
+                "summary": "Obtenir les détails d'une chambre spécifique",
+                "operationId": "4a430d8e2a432c94b01cbe6f661e30fa",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la chambre à récupérer",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détails de la chambre spécifiée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Chambre"
+                                        },
+                                        "chambre": {
+                                            "properties": {
+                                                "num": {
+                                                    "type": "string",
+                                                    "example": "101"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Chambre avec vue sur la mer"
+                                                },
+                                                "statut": {
+                                                    "type": "string",
+                                                    "example": "AVAILABLE"
+                                                },
+                                                "hotel": {
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Hotel Luxe"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "typesChambre": {
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Double"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "chambreImage": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "format": "binary"
+                                                    }
+                                                },
+                                                "tarifications": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 150
+                                                            },
+                                                            "season": {
+                                                                "type": "string",
+                                                                "example": "Summer"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Chambre inexistante",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Chambre inexistante"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/chambre/showAllRoomWithTarifs": {
+            "get": {
+                "tags": [
+                    "Chambre"
+                ],
+                "summary": "Obtenir toutes les chambres avec leurs tarifications",
+                "operationId": "c10e29fe65e85d4df89813f7ceddc112",
+                "responses": {
+                    "200": {
+                        "description": "Liste de toutes les chambres avec leurs tarifications",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "chambres": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "num": {
+                                                        "type": "string",
+                                                        "example": "101"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Chambre avec vue sur la mer"
+                                                    },
+                                                    "statut": {
+                                                        "type": "string",
+                                                        "example": "AVAILABLE"
+                                                    },
+                                                    "typesChambre": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Double"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "tarifications": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "price": {
+                                                                    "type": "number",
+                                                                    "format": "float",
+                                                                    "example": 150
+                                                                },
+                                                                "season": {
+                                                                    "type": "string",
+                                                                    "example": "Summer"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès refusé pour les utilisateurs non-admin",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Accès Refusé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/chambre/showRoomWithTarifs/{id:id}": {
+            "get": {
+                "tags": [
+                    "Chambre"
+                ],
+                "summary": "Obtenir une chambre avec ses tarifications",
+                "operationId": "25618dde2e6612a11b6b9abdd1414ec3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la chambre",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détails de la chambre avec ses tarifications",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "chambres": {
+                                            "properties": {
+                                                "num": {
+                                                    "type": "string",
+                                                    "example": "101"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Chambre avec vue sur la mer"
+                                                },
+                                                "statut": {
+                                                    "type": "string",
+                                                    "example": "AVAILABLE"
+                                                },
+                                                "typesChambre": {
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Double"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "tarifications": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 150
+                                                            },
+                                                            "season": {
+                                                                "type": "string",
+                                                                "example": "Summer"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès refusé pour les utilisateurs non-admin",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Accès Refusé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Chambre non trouvée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Chambre inexistante."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/chambre/showRoomWithPriceSeason": {
+            "get": {
+                "tags": [
+                    "Chambre"
+                ],
+                "summary": "Obtenir les chambres disponibles avec leurs tarifications actuelles en fonction de la saison",
+                "operationId": "e39da0fdd94e66158636e8c7528054fb",
+                "responses": {
+                    "200": {
+                        "description": "Liste des chambres avec leurs tarifs pour la saison actuelle",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "chambres": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "num": {
+                                                        "type": "string",
+                                                        "example": "101"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Chambre avec vue sur la mer"
+                                                    },
+                                                    "statut": {
+                                                        "type": "string",
+                                                        "example": "AVAILABLE"
+                                                    },
+                                                    "typesChambre": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Double"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "tarifications": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "price": {
+                                                                    "type": "number",
+                                                                    "format": "float",
+                                                                    "example": 150
+                                                                },
+                                                                "season": {
+                                                                    "type": "string",
+                                                                    "example": "Summer"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès refusé pour les utilisateurs non-admin",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Accès Refusé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/chambre/showSRoomWithPriceSeason/{id:id}": {
+            "get": {
+                "tags": [
+                    "Chambre"
+                ],
+                "summary": "Obtenir une chambre spécifique avec ses tarifs en fonction de la saison",
+                "operationId": "db250c27575355f3b5cac513b17e0219",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la chambre",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Détails de la chambre avec ses tarifs pour la saison actuelle",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "chambres": {
+                                            "properties": {
+                                                "num": {
+                                                    "type": "string",
+                                                    "example": "101"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Chambre avec vue sur la mer"
+                                                },
+                                                "statut": {
+                                                    "type": "string",
+                                                    "example": "AVAILABLE"
+                                                },
+                                                "typesChambre": {
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Double"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "tarifications": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "price": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 150
+                                                            },
+                                                            "season": {
+                                                                "type": "string",
+                                                                "example": "Summer"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès refusé pour les utilisateurs non-admin",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Accès Refusé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Chambre non trouvée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Chambre inexistante."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/chambre/searchRoom": {
+            "post": {
+                "tags": [
+                    "Chambre"
+                ],
+                "summary": "Obtenir les chambres disponibles dans une période spécifiée",
+                "operationId": "95696c5183db07920a3565ff964c9359",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "date_deb": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-12-01"
+                                    },
+                                    "date_fin": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-12-10"
+                                    },
+                                    "nmb_per": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Liste des chambres disponibles",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "available_rooms": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "num": {
+                                                        "type": "string",
+                                                        "example": "101"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Chambre avec vue sur la mer"
+                                                    },
+                                                    "tarif_total": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 500
+                                                    },
+                                                    "nuit": {
+                                                        "type": "integer",
+                                                        "example": 9
+                                                    },
+                                                    "tarif": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 50
+                                                    },
+                                                    "nmb_per": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "dateDebR": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "example": "2024-12-01"
+                                                    },
+                                                    "dateFinR": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "example": "2024-12-10"
+                                                    },
+                                                    "typesChambre": {
+                                                        "properties": {
+                                                            "capacity": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "chambreImage": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "image_path": {
+                                                                    "type": "string",
+                                                                    "example": "images/room_101.jpg"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Paramètres d'entrée invalides",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Les dates de réservation sont invalides."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès refusé pour les utilisateurs non administrateurs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Accès Refusé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/chambre/type/store": {
+            "put": {
+                "tags": [
+                    "Type chambre"
+                ],
+                "summary": "Créer un type de chambre",
+                "operationId": "3e967fe51dd670f0c2f7f14f4994fcb9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "L'ID du type de chambre à mettre à jour.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Chambre Standard"
+                                    },
+                                    "capacity": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "features": {
+                                        "type": "string",
+                                        "example": "Vue sur la mer, Lit King Size"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Le type de chambre a été créé avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Type de chambre créé avec succès"
+                                        },
+                                        "type_chambre": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Chambre Standard"
+                                                },
+                                                "capacity": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "features": {
+                                                    "type": "string",
+                                                    "example": "Vue sur la mer, Lit King Size"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "AVAILABLE"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès refusé pour les utilisateurs non administrateurs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Accès Refusé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "1062": {
+                        "description": "Type de chambre déjà existant",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Type de chambre existant."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Type chambre"
+                ],
+                "summary": "Créer un type de chambre",
+                "operationId": "e9c3dfba7b945768ef769e58db595f1f",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Nom du type de chambre",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Chambre Standard"
+                        }
+                    },
+                    {
+                        "name": "capacity",
+                        "in": "query",
+                        "description": "Capacité d'accueil de la chambre",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2
+                        }
+                    },
+                    {
+                        "name": "features",
+                        "in": "query",
+                        "description": "Caractéristiques supplémentaires de la chambre",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Vue sur la mer, Lit King Size"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Chambre Standard"
+                                    },
+                                    "capacity": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "features": {
+                                        "type": "string",
+                                        "example": "Vue sur la mer, Lit King Size"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Le type de chambre a été créé avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Type de chambre créé avec succès"
+                                        },
+                                        "type_chambre": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Chambre Standard"
+                                                },
+                                                "capacity": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "features": {
+                                                    "type": "string",
+                                                    "example": "Vue sur la mer, Lit King Size"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "AVAILABLE"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès refusé pour les utilisateurs non administrateurs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Accès Refusé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "1062": {
+                        "description": "Type de chambre déjà existant",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Type de chambre existant."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/chambre/type/show": {
+            "get": {
+                "tags": [
+                    "Type chambre"
+                ],
+                "summary": "Afficher les types de chambre",
+                "operationId": "c06451e6ee4fd3483075e74838ce6cd1",
+                "responses": {
+                    "200": {
+                        "description": "Liste des types de chambre de l'hôtel",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Liste des types de chambre de votre hôtel"
+                                        },
+                                        "typeChambre": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Chambre Standard"
+                                                    },
+                                                    "capacity": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "features": {
+                                                        "type": "string",
+                                                        "example": "Vue sur la mer, Lit King Size"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "AVAILABLE"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès refusé pour les utilisateurs non administrateurs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Accès Refusé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/chambre/type/showAll": {
+            "get": {
+                "tags": [
+                    "Type chambre"
+                ],
+                "summary": "Afficher tous les types de chambre",
+                "operationId": "d678ac3df5a9c454b9efe6a34313c3a3",
+                "responses": {
+                    "200": {
+                        "description": "Liste de tous les types de chambre",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Liste des types de chambre."
+                                        },
+                                        "typeChambre": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Chambre Standard"
+                                                    },
+                                                    "capacity": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "features": {
+                                                        "type": "string",
+                                                        "example": "Vue sur la mer, Lit King Size"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "AVAILABLE"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès refusé pour les utilisateurs non administrateurs ou sudo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Accès Refusé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/chambre/delete/{id:id}": {
+            "delete": {
+                "tags": [
+                    "Type chambre"
+                ],
+                "summary": "Supprimer un type de chambre",
+                "operationId": "ec4bc0a7beb2e6e2656cc11f53287499",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID du type de chambre à supprimer",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Type de chambre supprimé avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Type de chambre supprimé avec succès."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Type de chambre non trouvé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Type de chambre introuvable."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès refusé pour les utilisateurs non administrateurs ou sudo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Accès Refusé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/reservation/storeReserv": {
+            "post": {
+                "tags": [
+                    "Reservation"
+                ],
+                "summary": "Créer une réservation pour une chambre",
+                "description": "Cette API permet de créer une réservation pour une chambre en fonction des dates sélectionnées.",
+                "operationId": "storeReservation",
+                "parameters": [
+                    {
+                        "name": "chambre_id",
+                        "in": "query",
+                        "description": "Identifiant de la chambre à réserver",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "description": "Identifiant de l'utilisateur qui fait la réservation (facultatif si un email est fourni)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Email de l'utilisateur (facultatif si un user_id est fourni)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "user@example.com"
+                        }
+                    },
+                    {
+                        "name": "date_deb",
+                        "in": "query",
+                        "description": "Date de début de la réservation (format : YYYY-MM-DD)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-11-25"
+                        }
+                    },
+                    {
+                        "name": "date_fin",
+                        "in": "query",
+                        "description": "Date de fin de la réservation (format : YYYY-MM-DD)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-11-30"
+                        }
+                    },
+                    {
+                        "name": "nmb_per",
+                        "in": "query",
+                        "description": "Nombre de personnes pour la réservation",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "chambre_id": {
+                                        "description": "Identifiant de la chambre à réserver",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "user_id": {
+                                        "description": "Identifiant de l'utilisateur qui fait la réservation (facultatif si un email est fourni)",
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "email": {
+                                        "description": "Email de l'utilisateur (facultatif si un user_id est fourni)",
+                                        "type": "string",
+                                        "example": "user@example.com"
+                                    },
+                                    "date_deb": {
+                                        "description": "Date de début de la réservation (format : YYYY-MM-DD)",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-11-25"
+                                    },
+                                    "date_fin": {
+                                        "description": "Date de fin de la réservation (format : YYYY-MM-DD)",
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-11-30"
+                                    },
+                                    "nmb_per": {
+                                        "description": "Nombre de personnes pour la réservation",
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Réservation créée avec succès",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Réservation réussie."
+                                        },
+                                        "reservation": {
+                                            "properties": {
+                                                "user_id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "user@example.com"
+                                                },
+                                                "chambre_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "date_deb": {
+                                                    "type": "string",
+                                                    "example": "2024-11-25"
+                                                },
+                                                "date_fin": {
+                                                    "type": "string",
+                                                    "example": "2024-11-30"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "CONFIRMED"
+                                                },
+                                                "nmb_per": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "tarif_app": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 500
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erreur de validation ou disponibilité de la chambre",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "La chambre n'est pas disponible pour ces dates."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Chambre non trouvée",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Chambre non trouvée."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès refusé (par exemple, pour un utilisateur non authentifié)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Accès refusé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/reservation/getReserv": {
+            "get": {
+                "tags": [
+                    "Reservation"
+                ],
+                "summary": "Afficher les réservations d'un hôtel pour un utilisateur connecté",
+                "description": "Cette API permet d'afficher les réservations liées à l'hôtel de l'utilisateur connecté (admin, agent de réception, ou sudo).",
+                "operationId": "showReservationByHotelUser",
+                "responses": {
+                    "200": {
+                        "description": "Liste des réservations associées à l'hôtel de l'utilisateur",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "user_id": {
+                                                "type": "integer",
+                                                "example": 2
+                                            },
+                                            "chambre_id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "date_deb": {
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2024-11-25"
+                                            },
+                                            "date_fin": {
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2024-11-30"
+                                            },
+                                            "status": {
+                                                "type": "string",
+                                                "example": "CONFIRMED"
+                                            },
+                                            "nmb_per": {
+                                                "type": "integer",
+                                                "example": 2
+                                            },
+                                            "tarif_app": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 500
+                                            },
+                                            "chambre": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Chambre Standard"
+                                                    },
+                                                    "capacity": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "features": {
+                                                        "type": "string",
+                                                        "example": "Vue sur la mer, Lit King Size"
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "AVAILABLE"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "user": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "John Doe"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "example": "john.doe@example.com"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Accès refusé pour les utilisateurs non autorisés",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Accès refusé"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Aucune réservation trouvée pour cet hôtel",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Aucune réservation trouvée pour cet hôtel"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "tags": [
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Chambre",
+            "description": "Chambre"
+        },
+        {
+            "name": "Type chambre",
+            "description": "Type chambre"
+        },
+        {
+            "name": "Reservation",
+            "description": "Reservation"
         }
     ]
 }

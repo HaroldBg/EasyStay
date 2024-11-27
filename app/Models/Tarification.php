@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TarificationStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,6 +18,7 @@ class Tarification extends Model
         "date_fin",
         "types_chambres_id",
         "users_id",
+        "status",
     ];
 
     protected $casts = [
@@ -24,6 +26,7 @@ class Tarification extends Model
         "date_fin"=>"date",
         'createdAt' => 'datetime',
         'updateAt' => 'datetime',
+        "status" => TarificationStatus::class,
     ];
     public function typeChambre(): BelongsTo
     {
