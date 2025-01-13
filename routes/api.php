@@ -35,6 +35,7 @@ Route::prefix("auth")->group(function (){
 Route::prefix("auth")->middleware("auth:sanctum")->group(function (){
     Route::post("logout",[AuthController::class,"logout"]);
     Route::post("storeFDA",[AuthController::class,"storeFrontDeskAgent"]);
+    Route::post("storeClientSec",[UserController::class,"storeClient"]);
 });
 // hotel
 
@@ -86,6 +87,7 @@ Route::prefix("/reservation")->middleware("auth:sanctum")->group(function (){
     Route::post("/getReserv",[ReservationController::class,"showReservationByHotelUser"]);
     Route::get("/checkin/{id} ",[ReservationController::class,"checkIn"]);
     Route::get("/checkout/{id}",[ReservationController::class,"checkOut"]);
+    Route::get("/show/{id}",[ReservationController::class,"showReservationById"]);
     Route::delete("/delete/{id}",[ReservationController::class,"deleteReserv"]);
 });
 

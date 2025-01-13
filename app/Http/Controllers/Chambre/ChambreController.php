@@ -153,7 +153,7 @@ class ChambreController extends Controller
             "types_chambres_id"=>$request->types_chambres_id,
             "hotel_id"=>$user->hotels_id,
             "users_id"=>Auth::id(),
-            "statut"=>ChambreStatus::AVAILABLE,
+            "statut"=>ChambreStatus::MAINTENANCE,
         ]);
         if (!$room){
             return response()->json([
@@ -692,6 +692,7 @@ class ChambreController extends Controller
 
         // Fetch rooms that are not reserved in the specified date range
         $availableRooms = Chambre::query()
+            ->where('statut',ChambreStatus::AVAILABLE)
             ->whereHas('typesChambre', function ($query) use ($nmb_per) {
                 $query->where('capacity', '>=', $nmb_per);
             })
@@ -760,12 +761,19 @@ class ChambreController extends Controller
         //dd($id);
         //let find element
         $typeRoom = Chambre::query()->find($id);
-
         // Vérifier si l'élément existe
         if (!$typeRoom) {
             return response()->json([
                 "error" => true,
                 "message" => "Chambre introuvable. ",
+            ], 404);
+        }
+
+        $tarification = $typeRoom->typesChambre->tarifications;
+        if ($tarification->isEmpty()){
+            return response()->json([
+                "error" => true,
+                "message" => "Aucune tarification disponible veuillez attribuer des tarifications au type de chambre. ",
             ], 404);
         }
         $typeRoom->update([

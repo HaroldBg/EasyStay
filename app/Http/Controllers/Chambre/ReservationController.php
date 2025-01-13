@@ -6,6 +6,7 @@ use App\Enums\ReservationStatus;
 use App\Enums\UserRoles;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Chambre\StoreReservationRequest;
+use App\Http\Resources\ReservationResource;
 use App\Models\Chambre;
 use App\Models\Reservation;
 use App\Models\Tarification;
@@ -353,6 +354,31 @@ class ReservationController extends Controller
         return response()->json([
             "error"=>false,
             "message"=>"Statut passer au check-out."
+        ]);
+    }
+
+    // let show reservertaion by id
+    public function showReservationById($id)
+    {
+        // let only front desk agent and admin access this
+        $user = Auth::user();
+        abort_if(!in_array($user->role, [UserRoles::ADMIN, UserRoles::FRONTDESKAGENT, UserRoles::SUDO]), 403, "Accès Refusé");
+        // let find the reservation
+        $reservation = Reservation::query()->find($id);
+
+        // let check if the reservation exist
+        if (!$reservation){
+            return response()->json([
+                "error" => false,
+                "message" => "Reservation inexistante"
+            ]);
+        }
+         $reservation->chambre;
+        $reservation->typeChambre = $reservation->chambre->typesChambre;
+        return response()->json([
+            "error" => false,
+            "message" => "Reservation existante",
+            "reservation"=> new ReservationResource($reservation),
         ]);
     }
 }
